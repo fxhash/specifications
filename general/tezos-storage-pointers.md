@@ -12,7 +12,7 @@ A **Tezos Storage Pointer** is a list of key-value `string` pairs.
 | --- | ----------- | ------------ | -------- | ------- | ------- |
 | contract | The address of a Smart Contract | a string starting with KT1 | yes | | `KT1BJC12dG17CVvPKJ1VYaNnaT5mzfnUTwXv` |
 | path | The path to the data to fetch from the root of a contract | A list of 2-colon-separated values, where each value points to a lower node in the exploration of the tree | yes | | `token_metadata::1452` where `token_metadata` is the bigmap annotation name in the storage and `1452` is the key in the bigmap |
-| value_path | The path to the data from the root of the data fetched using `path` | A list of 2-colon-separated values, where each value points to a lower node in the exploration of the tree. If empty string, the whole data is retrieved from `path`. | no | `token_info::` | `token_info::` to retrieve the metadata URI from the data fetched. There are 2 values: `'token_info'` and `''` (empty string), which means that when data is fetched from path, then we lookup `'token_info'`->`''` in the object retrived |
+| value_path | The path to the data from the root of the data fetched using `path` | A list of 2-colon-separated values, where each value points to a lower node in the exploration of the tree. If empty string, the whole data is retrieved from `path`. | no | `token_info::` | `token_info::` to retrieve the metadata URI from the data fetched. There are 2 values: `'token_info'` and `''` (empty string), which means that when data is fetched from path, then we lookup `'token_info'`->`''` in the object retrieved |
 | storage_type | The data type of the storage in which we want to retrieve the data. ie: the type of the first value in the path | string | no | `bigmap` | |
 | spec | The specification of the contract. | string | no | `TZIP-012` | `TZIP-012` (FA2 contract) |
 | data_spec | The specification of the data to retrieve. | no | string | `TZIP-021` | `TZIP-021` (FA2 asset) |
@@ -20,12 +20,12 @@ A **Tezos Storage Pointer** is a list of key-value `string` pairs.
 
 ## The need for 2 paths properties: `path` and `value_path`
 
-Most general-purpose indexers (such as tzkt) have a generic endpoints to retrieve data from the blockchain. By splitting the path to the actual data of interest, we facilitate its retrieval which happens in a 2-step process:
+Most general-purpose indexers (such as tzkt) have generic endpoints to retrieve data from the blockchain. By splitting the path to the actual data of interest, we facilitate its retrieval which happens in a 2-step process:
 
 * query the indexer with the `path` to get the value stored
 * use `value_path` to lookup the data of interest from the data returned at the previous step
 
-`path` and `value_path` can be concatenated to a single pointer, however have these separated will facilitate the usage of this spec for fetching data in practice.
+`path` and `value_path` can be concatenated to a single pointer, however having these separated will facilitate the usage of this spec for fetching data in practice.
 
 
 # Examples
