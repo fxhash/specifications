@@ -8,6 +8,8 @@ fxhash specifications
 
 # Content
 
-## General
-
-* [Tezos Storage Pointers](/general/tezos-storage-pointers.md)
+* General
+  * [Tezos Storage Pointers](/general/tezos-storage-pointers.md)
+* Articles
+  * [Article metadata](/articles/article-metadata.md)
+  * [fx-markdown](/articles/fx-markdown.md)
