@@ -8,14 +8,59 @@ A Tezos Storage Pointer is a declarative list of key-value properties pointing t
 
 A **Tezos Storage Pointer** is a list of key-value `string` pairs.
 
-| key | description | value format | required | default | example |
-| --- | ----------- | ------------ | -------- | ------- | ------- |
-| contract | The address of a Smart Contract | a string starting with KT1 | yes | | `KT1BJC12dG17CVvPKJ1VYaNnaT5mzfnUTwXv` |
-| path | The path to the data to fetch from the root of a contract | A list of 2-colon-separated values, where each value points to a lower node in the exploration of the tree | yes | | `token_metadata::1452` where `token_metadata` is the bigmap annotation name in the storage and `1452` is the key in the bigmap |
-| value_path | The path to the data from the root of the data fetched using `path` | A list of 2-colon-separated values, where each value points to a lower node in the exploration of the tree. If empty string, the whole data is retrieved from `path`. | no | `token_info::` | `token_info::` to retrieve the metadata URI from the data fetched. There are 2 values: `'token_info'` and `''` (empty string), which means that when data is fetched from path, then we lookup `'token_info'`->`''` in the object retrieved |
-| storage_type | The data type of the storage in which we want to retrieve the data. ie: the type of the first value in the path | string | no | `bigmap` | |
-| spec | The specification of the contract. | string | no | `TZIP-012` | `TZIP-012` (FA2 contract) |
-| data_spec | The specification of the data to retrieve. | no | string | `TZIP-021` | `TZIP-021` (FA2 asset) |
+## contract
+
+Location of the contract pointed to.
+
+* **key**: `contract`
+* **value format**: `<address>.<network>`
+  * Valid addresses are base58check-encoded Tezos contract addresses: `KT1....`
+  * Valid networks are base58check-encoded Tezos chain identifiers `Net....` or known public network aliases: `mainnet`, `carthagenet`, `delphinet`, …
+  * `<network>` is optionnal, if undefined the "current" network in a given context will be picked
+* **required**: yes
+* **default**: /
+* **example**: `KT1BJC12dG17CVvPKJ1VYaNnaT5mzfnUTwXv` or `KT1BJC12dG17CVvPKJ1VYaNnaT5mzfnUTwXv.mainnet`
+
+
+## path
+
+The path to the data to fetch from the root of the contract.
+
+* **key**: `path`
+* **value format**: A list of 2-colon-separated values, where each value points to a lower node in the exploration of the tree. Values can be hierachical (for instance: `assets.ledger`). If a value represents a key to traverse the tree further down, it can be a plain value `abcde...` or complex (an object or an array), you can specify it as is, for example, `{'address':'tz123','nat':'123'}`. Double quotes `"` are not accepted.
+* **required**: yes
+* **default**: /
+* **example**: `token_metadata::1452`, `assets.ledger::774`, `ledger::{'address':'tz123','nat':'123'}`
+
+## value_path
+
+The path to the data from the root of the data fetched using `path`. This property is used to facilitate the retrieval of the target data, as in many cases there needs to be a 2-step fetch: first getting the data from the contract and then processing the data to extract what's targetted.
+
+* **key**: `value_path`
+* **value format**: Same a `path`
+* **required**: no
+* **default**: / (get the whole data fetched from the contract storage)
+* **example**: `token_info::`, `map_key::map_key2::12::age`
+
+## storage_type
+
+The data type of the element at the root of the storage, ie: the type of the element of the first data pointed by the first value of the `path`.
+
+* **key**: `storage_type`
+* **value format**: string
+* **required**: no
+* **default**: `bigmap`
+* **example**:
+
+## data_spec
+
+The specification of the data to retrieve.
+
+* **key**: `data_spec`
+* **value format**: string
+* **required**: no
+* **default**: `TZIP-021` (FA2 asset)
+* **example**: `TZIP-021`
 
 
 ## The need for 2 paths properties: `path` and `value_path`
@@ -49,8 +94,6 @@ path: "token_metadata::1045062"
 ```
 contract: "KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC"
 path: "asks::1903555"
-value_path: ""
-spec: ""
 data_spec: ""
 ```
 
@@ -59,7 +102,5 @@ data_spec: ""
 ```
 contract: "KT1Sy7X6TubmZ39G8CHVrUcxjc3jiF68P8oB"
 path: "ledger::85"
-value_path: ""
-spec: "FX-ISSUER-002"
 data_spec: "FX-GEN-DATA-002"
 ```
